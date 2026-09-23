@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioLearning - Tema 6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init({ publicKey: "3LjnpLaDboHWv0VPY" });
+        })();
+    </script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .iframe-container { position: relative; width: 100%; height: 75vh; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .nav-btn { transition: all 0.3s ease; border-bottom: 3px solid transparent; white-space: nowrap; }
+        .nav-btn:hover { transform: translateY(-2px); }
+        .nav-btn.active { border-color: #10b981; color: #10b981; }
+        @keyframes pulse-dot { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .dot-pulse { animation: pulse-dot 1.2s infinite; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-xl font-black text-emerald-600 tracking-tight">UNIDAD 6</h1>
+                    <p class="text-slate-500 font-bold text-xs uppercase">Tema 7.6: Secuencias Gráficas</p>
+                </div>
+               
+                <nav class="flex flex-wrap justify-center gap-1 md:gap-4">
+                    <button onclick="prepQuiz('deber', this)" class="nav-btn active px-3 py-2 font-bold text-slate-700 flex items-center gap-2">
+                        <span>🧪</span> Deber
+                    </button>
+                    <button onclick="prepQuiz('evaluacion', this)" class="nav-btn px-3 py-2 font-bold text-slate-700 flex items-center gap-2">
+                        <span>📝</span> Repaso
+                    </button>
+                    <button onclick="prepQuiz('extra', this)" class="nav-btn px-3 py-2 font-bold text-slate-700 flex items-center gap-2">
+                        <span>📚</span> Práctica
+                    </button>
+                    <button onclick="prepQuiz('evaluacion_final', this)" class="nav-btn px-3 py-2 font-bold text-slate-700 flex items-center gap-2">
+                        <span>📊</span> Evaluación
+                    </button>
+                    <button onclick="showSection('pdf', this)" class="nav-btn px-3 py-2 font-bold text-slate-700 flex items-center gap-2">
+                        <span>📋</span> Pizarra
+                    </button>
+                    <button onclick="showSection('video', this)" class="nav-btn px-3 py-2 font-bold text-slate-700 flex items-center gap-2">
+                        <span>🎥</span> Video
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main id="app" class="max-w-5xl mx-auto p-6">
+    </main>
+    <script>
+        const DRIVE_PDF_URL = "https://drive.google.com/file/d/1Am_vGJl8k6tEyuE1t7tWZsWGijhEfFgO/view?usp=sharing";
+        const DRIVE_VIDEO_URL = "https://drive.google.com/file/d/1rYSGWjYS74y8mSrqT3ZLqEplmkSMux9Z/view?usp=sharing";
+
+
+        // PRINCIPAL (Deber + Repaso) 30/10 preguntas
+
+        const quizData = [
+            { question: 'Identifique la imagen que completa la secuencia gráfica. <br> <img src="https://i.ibb.co/27jdF6Ph/Captura-de-pantalla-2026-08-05-154535.png" alt="Descripción de la imagen" width="380" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'El patrón que se identifica es el movimiento de cada una de los elementos dibujados en la cuadrícula, en diagonal, de izquierda a derecha y de forma inversa. <br> <img src="https://i.ibb.co/xqv4r6d3/Captura-de-pantalla-2026-09-21-143554.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la figura que reemplaza al signo de interrogación, considerando que el recuadro gris oculta elementos. <br> <img src="https://i.ibb.co/ksJnyRms/Captura-de-pantalla-2026-08-05-154749.png" alt="Descripción de la imagen" width="380" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'Los puntos tienen una sucesión de posición, están fuera, dentro, etc. <br> <img src="https://i.ibb.co/Xk3ppLWV/Captura-de-pantalla-2026-09-21-144037.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la figura que reemplaza al signo de interrogación, considerando que el recuadro gris oculta elementos. <br> <img src="https://i.ibb.co/CKNfmHFg/Captura-de-pantalla-2026-08-05-155054.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'La figura (+) aumenta y disminuye, además de cada una de las figuras tiene una secuencia de aumento de líneas. <br> <img src="https://i.ibb.co/ympRvvyW/Captura-de-pantalla-2026-09-21-144215.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la imagen que continúa la secuencia. <br> <img src="https://i.ibb.co/Q7VStWwQ/Captura-de-pantalla-2026-08-05-155232.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'La secuencia muestra un aumento y disminución de líneas, además el triangulo pintado dentro de la figura gira en sentido anti-horario, <br> <img src="https://i.ibb.co/1Y3kwrXS/Captura-de-pantalla-2026-09-21-144610.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'ON', maxSelect: 4 },
+            { question: 'Identifique la imagen que continúa la secuencia. <br> <img src="https://i.ibb.co/5g3dzC2F/Captura-de-pantalla-2026-08-05-155504.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'El patrón indica que el circulo intercala color entre blanco y negro, además de estar moviéndose en sentido anti-horario.', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la imagen que reemplaza al signo de interrogación. <br> <img src="https://i.ibb.co/JwBJhvyG/Captura-de-pantalla-2026-08-05-155657.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'La figura está girando en sentido horario por lo que el triangulo del interior tendría la cara hacia arriba y las pestañas de color negro y luego blanco. <br> <img src="https://i.ibb.co/C3sFsW4f/Captura-de-pantalla-2026-09-21-145833.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la figura que reemplaza al signo de interrogación. <br> <img src="https://i.ibb.co/ccMmjnhy/Captura-de-pantalla-2026-08-05-155821.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'El patrón que se identifica es el giro anti-horario, con un cambio de color. <br> <img src="https://i.ibb.co/jZJ5QwgR/Captura-de-pantalla-2026-09-21-150029.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la imagen que reemplaza al signo de interrogación <br> <img src="https://i.ibb.co/F4YdQXyD/Captura-de-pantalla-2026-08-05-155936.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'Todas las figuras tienen 4 líneas. <br> <img src="https://i.ibb.co/WvWXnPHZ/Captura-de-pantalla-2026-09-21-150424.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la imagen que reemplaza al signo de interrogación. <br> <img src="https://i.ibb.co/gZqCV609/Captura-de-pantalla-2026-08-06-092154.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'B', explanation: 'Los lados de las figuras se suman para obtener el patrón. <br> <img src="https://i.ibb.co/nqdwFB8n/Captura-de-pantalla-2026-09-21-151338.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa. <br> <img src="https://i.ibb.co/yn7HXcgW/Captura-de-pantalla-2026-08-06-092441.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'La figura se forma en sentido anti-horario. <br> <img src="https://i.ibb.co/5g6SJqC3/Captura-de-pantalla-2026-09-21-151457.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa <br> <img src="https://i.ibb.co/Mx7X4zvW/Captura-de-pantalla-2026-08-06-092941.png" alt="Descripción de la imagen" width="400" height="400">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'B', explanation: 'El patrón que se identifica es el movimiento de la figura afuera, además del color de la figura interna. <br> <img src="https://i.ibb.co/TQ0PCnT/Captura-de-pantalla-2026-09-21-151648.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/5XTBHScy/Captura-de-pantalla-2026-08-06-093055.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'La figura interna sale para ser la externa en el siguiente conjunto de figuras. <br> <img src="https://i.ibb.co/LDNvD9XB/Captura-de-pantalla-2026-09-21-152009.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/Fks9N5rF/Captura-de-pantalla-2026-08-06-093220.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'La figura se mueve 90° en sentido horario. <br> Además de intercambiar posición entre los colores negro y gris. <br> <img src="https://i.ibb.co/GfY5WL0Z/Captura-de-pantalla-2026-09-21-152200.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la imagen que reemplaza al signo de interrogación <br> <img src="https://i.ibb.co/cSy4bCkV/Captura-de-pantalla-2026-08-06-093422.png" alt="Descripción de la imagen" width="400" height="400">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'E', explanation: 'La figura se abre de manera consecutiva. <br> <img src="https://i.ibb.co/RphQBNn3/Captura-de-pantalla-2026-09-21-152358.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/hxPwyLmC/Captura-de-pantalla-2026-08-06-093611.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'La figura externa ingresa, así como las demás. <br> <img src="https://i.ibb.co/99bm83tg/Captura-de-pantalla-2026-09-21-152514.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa <br> <img src="https://i.ibb.co/fdKbT1Fh/Captura-de-pantalla-2026-08-06-093812.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'B', explanation: 'Cada conjunto de elemento sumando sus lados nos da una secuencia. <br> <img src="https://i.ibb.co/spDDXwwY/Captura-de-pantalla-2026-09-21-153012.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Que figura continua <br> <img src="https://i.ibb.co/3ymzcHQF/Captura-de-pantalla-2026-08-06-093954.png" alt="Descripción de la imagen" width="400" height="400">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'La figura interna se transforma en la figura exterior. <br> <img src="https://i.ibb.co/mVHtHD88/Captura-de-pantalla-2026-09-21-153431.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Que figura continua. <br> <img src="https://i.ibb.co/LzF0BW6N/Captura-de-pantalla-2026-08-06-094146.png" alt="Descripción de la imagen" width="400" height="400">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'B', explanation: 'El recuadro pintado de mueve de forma diagonal y el recuadro blanco se mueve en sentido anti-horario. <br> <img src="https://i.ibb.co/KcF01p7J/Captura-de-pantalla-2026-09-21-153621.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Que figura continua la serie. <br> <img src="https://i.ibb.co/h1V4TgqZ/Captura-de-pantalla-2026-08-06-094301.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'Los colores cambian de posición en sentido horario. <br> <img src="https://i.ibb.co/6cRgckNZ/Captura-de-pantalla-2026-09-21-153850.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/Kx5pkmQ7/Captura-de-pantalla-2026-08-06-094714.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'La figura inferior gira anti-horario 45°, y la figura en el centro gira 135°. <br> <img src="https://i.ibb.co/mV4pmZH4/Captura-de-pantalla-2026-09-21-161054.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/fGy20zpY/Captura-de-pantalla-2026-08-06-094828.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'Existe un aumento de figuras en la misma posición. <br> <img src="https://i.ibb.co/hxhq15qX/Captura-de-pantalla-2026-09-21-162804.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/TDyFpB7Y/Captura-de-pantalla-2026-08-06-095130.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'Los lados disminuyen, estos lados miden exactamente lo mismo, además en la primera figura existen líneas rectas he inclinadas, en la segunda solo inclinadas. <br> <img src="https://i.ibb.co/xtT8654T/Captura-de-pantalla-2026-09-21-163319.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/qMBQssYX/Captura-de-pantalla-2026-08-06-095255.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'Los triángulos pintados giran en secuencia, una posición, dos posiciones y finalmente tres posiciones. <br> <img src="https://i.ibb.co/39LB8S0T/Captura-de-pantalla-2026-09-21-163442.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la imagen que completa la secuencia gráfica. <br> <img src="https://i.ibb.co/DHcGSyhW/Captura-de-pantalla-2026-08-06-095424.png" alt="Descripción de la imagen" width="400" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'La figura gira consecutivamente. <br> <img src="https://i.ibb.co/Vp0gBbL7/Captura-de-pantalla-2026-09-21-163605.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/39vNfTSK/Captura-de-pantalla-2026-08-06-095548.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'B', explanation: 'El circulo negro gira anti – horario y el circulo blanco gira en sentido horario. <br> <img src="https://i.ibb.co/XfY3mMW7/Captura-de-pantalla-2026-09-21-164057.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/0pw24ppf/Captura-de-pantalla-2026-08-06-095726.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'B', explanation: 'La figura gira 90° anti-horario consecutivamente. <br> <img src="https://i.ibb.co/0p32z6b3/Captura-de-pantalla-2026-09-21-164638.png" alt="Descripción de la imagen" width="380" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/hR0WsWnx/Captura-de-pantalla-2026-08-06-100006.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'El patrón que se identifica es la eliminación del circulo negro. <br> <img src="https://i.ibb.co/wtRZ47R/Captura-de-pantalla-2026-09-21-165111.png" alt="Descripción de la imagen" width="380" height="250">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/xK6DQR13/Captura-de-pantalla-2026-08-06-100124.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'A', explanation: 'Los puntos internos sigue el patrón de color negro, blanco, etc. <br> <img src="https://i.ibb.co/hFn8K7dm/Captura-de-pantalla-2026-09-21-165244.png" alt="Descripción de la imagen" width="380" height="250">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/B2s62xDv/Captura-de-pantalla-2026-08-06-100258.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'La figura gira en sentido horario. <br> <img src="https://i.ibb.co/HDkzR00H/Captura-de-pantalla-2026-09-22-123822.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la imagen que falta en la secuencia. <br> <img src="https://i.ibb.co/DDXK9DQC/Captura-de-pantalla-2026-08-06-100602.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'Las figuras giran en sentido horario. <br> <img src="https://i.ibb.co/wF867v7Z/Captura-de-pantalla-2026-09-22-124111.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+        ];
+
+
+        // Practica 20 preguntas
+
+        const quizDataExtra = [
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/v2Z11Xs/Captura-de-pantalla-2026-08-06-100750.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'D', explanation: 'Los triángulos aumentas y las puntas pintadas de las estrellas giran. <br> <img src="https://i.ibb.co/5x1kntJM/Captura-de-pantalla-2026-09-22-124911.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/W4wTWRzm/Captura-de-pantalla-2026-08-06-100914.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'Las flechas miran hacia arriba, luego para arriba, etc. <br> <img src="https://i.ibb.co/m5mwJbTn/Captura-de-pantalla-2026-09-22-125154.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'ON', maxSelect: 2 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/8gY050C3/Captura-de-pantalla-2026-08-06-101121.png" alt="Descripción de la imagen" width="440" height="200">', options: ['OP1', 'OP2', 'OP3', 'OP4', 'OP2'], answer: 'E', explanation: 'Los círculos dentro de la figura aumentan y las círculos blancos fuera dismunuyen. <br> <img src="https://i.ibb.co/XxHpjbgt/Captura-de-pantalla-2026-09-22-125704.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa <br> <img src="https://i.ibb.co/vvBHjrWb/Captura-de-pantalla-2026-08-06-101324.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'B', explanation: 'Se intercala el color de los elementos además de que estos de mueven. <br> <img src="https://i.ibb.co/LqSNYqM/Captura-de-pantalla-2026-09-22-130233.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa. <br> <img src="https://i.ibb.co/nN0QSV33/Captura-de-pantalla-2026-08-06-101503.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'D', explanation: 'El patrón indica que las figuras giran en sentido horario y las líneas punteadas se corre una posición. <br> <img src="https://i.ibb.co/Z1KfrzZq/Captura-de-pantalla-2026-09-22-130541.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa. <br> <img src="https://i.ibb.co/SXBvPZ1g/Captura-de-pantalla-2026-08-06-101713.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'Los colores se intercalan entre blanco y negro demás de las líneas dentro del cirulo cambian su sentido. <br> <img src="https://i.ibb.co/Z9NBWPL/Captura-de-pantalla-2026-09-22-130901.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/xK44Nzrt/Captura-de-pantalla-2026-08-06-101824.png" alt="Descripción de la imagen" width="440" height="150">', options: ['A', 'B', 'C'], answer: 'B', explanation: 'Los recuadros pintados can agregándose uno por uno. <br> <img src="https://i.ibb.co/RkqLtXq9/Captura-de-pantalla-2026-09-22-131122.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa. <br> <img src="https://i.ibb.co/MHnhj8V/Captura-de-pantalla-2026-08-06-102336.png" alt="Descripción de la imagen" width="440" height="150">', options: ['A', 'B', 'C'], answer: 'A', explanation: 'Las partes pintadas se aumentan consecutivamente una por una. <br> <img src="https://i.ibb.co/rGGXBHMP/Captura-de-pantalla-2026-09-22-131755.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa. <br> <img src="https://i.ibb.co/TM0nLC38/Captura-de-pantalla-2026-08-06-103051.png" alt="Descripción de la imagen" width="440" height="150">', options: ['A', 'B', 'C'], answer: 'C', explanation: 'Las partes pintadas se aumentan consecutivamente una por una. <br> <img src="https://i.ibb.co/yn4D1Q7r/Captura-de-pantalla-2026-09-22-132126.png" alt="Descripción de la imagen" width="440" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/Kpyy7jCc/Captura-de-pantalla-2026-08-06-103230.png" alt="Descripción de la imagen" width="440" height="150">', options: ['A', 'B', 'C'], answer: 'B', explanation: 'Las partes pintadas se aumentan consecutivamente columna por columna. <br> <img src="https://i.ibb.co/fKfYj25/Captura-de-pantalla-2026-09-22-132416.png" alt="Descripción de la imagen" width="440" height="220">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/yBRh6KyG/Captura-de-pantalla-2026-08-06-103449.png" alt="Descripción de la imagen" width="440" height="150">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'B', explanation: 'Las figuras están formadas por el mismo número, 2, 4, 6, 8, 10. <br> <img src="https://i.ibb.co/xSBMn4c9/Captura-de-pantalla-2026-09-22-132650.png" alt="Descripción de la imagen" width="440" height="220">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/LD6HntzV/Captura-de-pantalla-2026-08-06-103558.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'El número de líneas se representan el siguiente elemento, teniendo un orden del menor en el numerador yla mayor cantidad en el denominador. <br> <img src="https://i.ibb.co/bjXKc9k3/Captura-de-pantalla-2026-09-22-132851.png" alt="Descripción de la imagen" width="440" height="220">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/hxVnH1Vn/Captura-de-pantalla-2026-08-06-103814.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'C', explanation: 'El circulo blanco que se encuentra fuera de la figura se alterna en posición arriba y abajo; además de las líneas giran en contra de las manecillas del reloj. Y finalmente el recuadro sigue la secuencia de blanco y negro, con dos posiciones en la parte inferior y dos en la superior. <br> <img src="https://i.ibb.co/rGDtWF7P/Captura-de-pantalla-2026-09-22-133049.png" alt="Descripción de la imagen" width="440" height="220">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/q3zj2DGg/Captura-de-pantalla-2026-08-06-103917.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'A', explanation: 'Tiene una secuencia del triangulo arriba, abajo, etc. Además de tener una segunda secuencia de líneas, blanco, gris. <br> <img src="https://i.ibb.co/QjjCgQSy/Captura-de-pantalla-2026-09-22-133257.png" alt="Descripción de la imagen" width="440" height="220">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa. <br> <img src="https://i.ibb.co/SXVttLYN/Captura-de-pantalla-2026-08-06-104447.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'E', explanation: 'Las líneas se disminuyen consecutivamente. <br> <img src="https://i.ibb.co/3YYyjQtb/Captura-de-pantalla-2026-09-22-133445.png" alt="Descripción de la imagen" width="440" height="220">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/j9Qrn3j8/Captura-de-pantalla-2026-08-06-104623.png" alt="Descripción de la imagen" width="440" height="400">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'La línea que sobrepasa al circulo gira 90° en sentido horario. <br> <img src="https://i.ibb.co/1fzGqSFr/Captura-de-pantalla-2026-09-22-133828.png" alt="Descripción de la imagen" width="440" height="350">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/dJ4smgwd/Captura-de-pantalla-2026-08-06-104757.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'Aumentan las figuras sucesivamente, y quedan siempre en el mismo lugar. <br> <img src="https://i.ibb.co/HSxFRsr/Captura-de-pantalla-2026-09-22-134013.png" alt="Descripción de la imagen" width="440" height="250">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/gbmXN42n/Captura-de-pantalla-2026-08-06-104921.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'Cada conjunto tiene un número específico de líneas, cada dos conjuntos aumentan este número. <br> <img src="https://i.ibb.co/hR9Mg44d/Captura-de-pantalla-2026-09-22-134332.png" alt="Descripción de la imagen" width="440" height="250">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continúa. <br> <img src="https://i.ibb.co/ZpmbCbHj/Captura-de-pantalla-2026-08-06-105056.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'El recuadro se desplaza una posición a la derecha consecutivamente, además la línea se desplaza en forma diagonal. <br> <img src="https://i.ibb.co/9HDHYgZh/Captura-de-pantalla-2026-09-22-134547.png" alt="Descripción de la imagen" width="440" height="250">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la secuencia que continua <br> <img src="https://i.ibb.co/pj4LG5dn/Captura-de-pantalla-2026-08-06-105225.png" alt="Descripción de la imagen" width="440" height="200">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'La secuencia es de un triangulo, cuadrado y circulo, lo que cambia en la nueva secuencia es el color pero se conserva el orden de las figuras.<br> <img src="https://i.ibb.co/XrdSJW5G/Captura-de-pantalla-2026-09-22-134746.png" alt="Descripción de la imagen" width="440" height="250">', multi: 'OFF', maxSelect: 1 },
+        ];
+
+        // EVALUACIÓN (16 preguntas)
+
+        const quizDataEvaluacion = [
+            { question: '¿Qué figura continúa? <br> <img src="https://i.ibb.co/0yF5F8Kx/Captura-de-pantalla-2026-09-22-135158.png" alt="Descripción de la imagen" width="440" height="280">', options: ['A', 'B', 'C', 'D', 'E'], answer: 'A', explanation: 'La secuencia hace que la flecha gire 90 en sentido antihorario, hay que tomar en cuenta que cada giro la cruz y el circulo cambian de posición. <br> <img src="https://i.ibb.co/XZQXb6Q4/Captura-de-pantalla-2026-09-22-135942.png" alt="Descripción de la imagen" width="440" height="280">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Identifique la figura que sigue la secuencia. <br> <img src="https://i.ibb.co/dshr1PxR/Captura-de-pantalla-2026-09-22-140452.png" alt="Descripción de la imagen" width="560" height="200">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'Dentro de las figuras, cada posición se elimina una línea de la figura principal, así como se eliminan las líneas dentro de esta figura teniendo 4 y 3, después 3y 2, debería continuar 2 y 1 y finalmente tiene 1 y 0. <br> <img src="https://i.ibb.co/gMRxtQ7K/Captura-de-pantalla-2026-09-22-140753.png" alt="Descripción de la imagen" width="560" height="200">', multi: 'ON', maxSelect: 2 },
+            { question: 'Identifique la figura que continua la serie. <br> <img src="https://i.ibb.co/twMrW18m/Captura-de-pantalla-2026-09-22-141136.png" alt="Descripción de la imagen" width="560" height="300">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'Cada punto negro recorre media posición alrededor de la figura, además los puntos blancos recorren alineados en una línea recta vertical, inclinada, horizontal, inclinada, vertical, inclinada lo que nos da indicios que la siguiente posición es horizontal. <br> <img src="https://i.ibb.co/rGk5n5h8/Captura-de-pantalla-2026-09-22-141326.png" alt="Descripción de la imagen" width="560" height="300">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/R4CFM0Gp/Captura-de-pantalla-2026-09-22-141533.png" alt="Descripción de la imagen" width="560" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'Dentro del primer elemento tenemos una línea, luego dos líneas, tres líneas, por lo que en la siguiente posición sería una figura con 4 líneas. Hay que tener en cuenta que las líneas se complementan cada vez que se aumentan las mismas. <br> <img src="https://i.ibb.co/nMpXVr2h/Captura-de-pantalla-2026-09-22-141707.png" alt="Descripción de la imagen" width="560" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/0jKbJnP4/Captura-de-pantalla-2026-09-22-142054.png" alt="Descripción de la imagen" width="560" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'B', explanation: 'Si iniciamos desde el elemento final se puede ver que los recuadros negros van en aumento de la siguiente manera, 3,4,5,6 siendo este ultimo el número que necesitamos. Además las dos figuras van en incremento de sus puntas o vértices, teniendo en la figura inferior 3,4,5,6. Y en la figura superior 4,5,6,7. <br> <img src="https://i.ibb.co/SDmcVWy6/Captura-de-pantalla-2026-09-22-142605.png" alt="Descripción de la imagen" width="560" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/1tk8GRRp/Captura-de-pantalla-2026-09-22-142700.png" alt="Descripción de la imagen" width="550" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'El número de líneas se alterna de la siguiente forma: <br> Conjunto 1: Figura grande 3 figura pequeña 8 <br> Conjunto 2: Figura grande 7 figura pequeña 7 <br> Conjunto 3: Figura grande 5 figura pequeña 6 <br> Conjunto 4: Figura grande 5 figura pequeña 6 <br> Se relaciona un grande un pequeño para tener una secuencias. <br> <img src="https://i.ibb.co/jvGHpXbn/Captura-de-pantalla-2026-09-22-143331.png" alt="Descripción de la imagen" width="550" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/WWsSNSJb/Captura-de-pantalla-2026-09-22-143600.png" alt="Descripción de la imagen" width="550" height="250">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'La figura gira 45° en sentido horario. <br> <img src="https://i.ibb.co/cStKJYTD/Captura-de-pantalla-2026-09-22-143822.png" alt="Descripción de la imagen" width="550" height="250">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/Swmk6JTp/Captura-de-pantalla-2026-09-22-143934.png" alt="Descripción de la imagen" width="550" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'B', explanation: 'Los puntos que están ubicados en la parte superior tiene a siguiente secuencia: 5,4,3,2. En cuanto a los triángulos tenemos 2,3,4,5. Y finalmente tenemos las líneas las cuales están numeradas de la siguiente manera 6,5,4,3. <br> <img src="https://i.ibb.co/MjS5ymN/Captura-de-pantalla-2026-09-22-144048.png" alt="Descripción de la imagen" width="550" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/qLy9kfdC/Captura-de-pantalla-2026-09-22-144207.png" alt="Descripción de la imagen" width="550" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'B', explanation: 'Los elementos externos van disminuyendo 6,5,4,3,2. <br> <img src="https://i.ibb.co/ksTqz3Ss/Captura-de-pantalla-2026-09-22-144509.png" alt="Descripción de la imagen" width="550" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/Fk8hqsGN/Captura-de-pantalla-2026-09-22-144830.png" alt="Descripción de la imagen" width="550" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'B', explanation: 'El elemento de arriba ingresa a la figura inferior por lo que se debe determinar que la figura de arriba es un cuadrado. <br> <img src="https://i.ibb.co/wZ0DL43r/Captura-de-pantalla-2026-09-22-144952.png" alt="Descripción de la imagen" width="550" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/W4SWKbjT/Captura-de-pantalla-2026-09-22-145053.png" alt="Descripción de la imagen" width="550" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'A', explanation: 'La figura va disminuyendo de elementos. <br> <img src="https://i.ibb.co/C3tghf2B/Captura-de-pantalla-2026-09-22-145212.png" alt="Descripción de la imagen" width="550" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/Xf0drDp3/Captura-de-pantalla-2026-09-22-145657.png" alt="Descripción de la imagen" width="550" height="250">', options: ['A', 'B', 'C', 'D'], answer: 'B', explanation: 'Tiene una secuencia numérica de 0,2,4,6,8 en cuanto a los cuadrados pequeños, además se esta quitando un elemento progresivamente así como se punta una parte de todo el elemento. <br> <img src="https://i.ibb.co/Fk0LNtVm/Captura-de-pantalla-2026-09-22-145841.png" alt="Descripción de la imagen" width="550" height="250">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/MxCcKtM2/Captura-de-pantalla-2026-09-23-133534.png" alt="Descripción de la imagen" width="550" height="200">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'La figura interior grande gira en sentido antihorario 45°, además los elementos pequeños giran en sentido horario 90°. <br> <img src="https://i.ibb.co/hx94hRq9/Captura-de-pantalla-2026-09-23-133830.png" alt="Descripción de la imagen" width="550" height="200">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/FqdyQkyM/Captura-de-pantalla-2026-09-23-133957.png" alt="Descripción de la imagen" width="580" height="200">', options: ['A', 'B', 'C', 'D'], answer: 'D', explanation: 'El primer elemento se duplica y se genera un efecto espejo formando una figura sólida, en el tercer elemento nuevamente tenemos la base por lo que se debe publicar y aplicar espejo para obtener una figura sólida. <br> <img src="https://i.ibb.co/V0FbRLgn/Captura-de-pantalla-2026-09-23-134108.png" alt="Descripción de la imagen" width="580" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/Kxs0LWS3/Captura-de-pantalla-2026-09-23-134236.png" alt="Descripción de la imagen" width="580" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'Se genera un aumento de puntas de una en una, teniendo en cuenta que cada una sale sin mover las anteriores, saltando un espacio para crearce. <br> <img src="https://i.ibb.co/Qjrbd3XQ/Captura-de-pantalla-2026-09-23-134405.png" alt="Descripción de la imagen" width="580" height="150">', multi: 'OFF', maxSelect: 1 },
+            { question: 'Reemplaza el signo de interrogación. <br> <img src="https://i.ibb.co/Vh9zL6w/Captura-de-pantalla-2026-09-23-134619.png" alt="Descripción de la imagen" width="580" height="150">', options: ['A', 'B', 'C', 'D'], answer: 'C', explanation: 'Los colores se intercambian, arriba negro, abajo negro, arriba negro, tocaría abajo negro, además se aumenta el numero de puntos 1,2,3,4. <br> <img src="https://i.ibb.co/BVsbvxkR/Captura-de-pantalla-2026-09-23-134740.png" alt="Descripción de la imagen" width="580" height="150">', multi: 'OFF', maxSelect: 1 },
+        ];
+
+        let state = {
+            currentMode: 'deber',
+            view: 'quiz_home',
+            studentName: '',
+            studentEmail: '',
+            activeQuestions: [],
+            currentQuestion: 0,
+            score: 0,
+            selectedAnswer: null,
+            isAnswerCorrect: null,
+            emailStatus: null,
+            emailAnalysis: null,
+            emailAnalysisMsg: ''
+        };
+
+        const disposableDomains = [
+            'tempmail.com','temp-mail.org','guerrillamail.com','10minutemail.com','mailinator.com',
+            'yopmail.com','throwawaymail.com','fakeinbox.com','trashmail.com','getnada.com',
+            'maildrop.cc','dispostable.com','sharklasers.com','guerrillamailblock.com'
+        ];
+        const trustedProviders = [
+            'gmail.com','googlemail.com','hotmail.com','hotmail.es','hotmail.co.uk','outlook.com',
+            'outlook.es','live.com','msn.com','yahoo.com','yahoo.es','icloud.com','me.com',
+            'protonmail.com','proton.me','aol.com','zoho.com','gmx.com','mail.com'
+        ];
+
+        function isValidEmailFormat(email) {
+            const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+            return re.test(email) && email.length <= 254 && !email.includes('..') && !email.startsWith('.') && !email.endsWith('.');
+        }
+
+        function analyzeEmail(email) {
+            const lower = email.toLowerCase().trim();
+            if (!lower) {
+                return { valid: false, msg: 'Escribe un correo electrónico.' };
+            }
+            if (!isValidEmailFormat(lower)) {
+                return { valid: false, msg: 'Formato inválido. Revisa que tenga @ y un dominio correcto.' };
+            }
+            const domain = lower.split('@')[1];
+            if (!domain || domain.length < 3) {
+                return { valid: false, msg: 'Dominio incompleto o inválido.' };
+            }
+            if (disposableDomains.some(d => domain === d || domain.endsWith('.' + d))) {
+                return { valid: false, msg: 'Correo temporal / desechable detectado. Usa un correo real.' };
+            }
+            const isTrusted = trustedProviders.some(p => domain === p);
+            const hasGoodTld = /\.(com|es|net|org|edu|gov|mx|ar|co|uk|de|fr|it|pt|br|cl)$/i.test(domain);
+            if (!hasGoodTld && !isTrusted) {
+                return { valid: false, msg: 'Dominio poco común o sospechoso. Usa Gmail, Hotmail/Outlook, Yahoo, etc.' };
+            }
+            let analysisText = '';
+            if (domain.includes('hotmail') || domain.includes('outlook') || domain.includes('live.com') || domain.includes('msn.com')) {
+                analysisText = 'Análisis: proveedor Microsoft (Hotmail/Outlook) detectado · formato correcto · dominio legítimo';
+            } else if (domain.includes('gmail') || domain.includes('googlemail')) {
+                analysisText = 'Análisis: proveedor Google (Gmail) detectado · formato correcto · dominio legítimo';
+            } else if (isTrusted) {
+                analysisText = 'Análisis: proveedor conocido · formato correcto · dominio legítimo';
+            } else {
+                analysisText = 'Análisis: formato válido · dominio con TLD estándar · no se detectaron patrones de correo temporal';
+            }
+            return { valid: true, msg: analysisText };
+        }
+
+        function showSection(section, btn) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const app = document.getElementById('app');
+            if (section === 'pdf') {
+                app.innerHTML = `<div class="animate-fade-in"><h2 class="text-xl font-bold mb-4">📄 Pizarra Virtual</h2><div class="iframe-container"><iframe src="${DRIVE_PDF_URL}" width="100%" height="100%"></iframe></div></div>`;
+            } else if (section === 'video') {
+                app.innerHTML = `<div class="animate-fade-in"><h2 class="text-xl font-bold mb-4">🎥 Video Clase</h2><div class="iframe-container"><iframe src="${DRIVE_VIDEO_URL}" width="100%" height="100%"></iframe></div></div>`;
+            }
+        }
+
+        function prepQuiz(mode, btn) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+           
+            state = {
+                currentMode: mode,
+                view: 'quiz_home',
+                studentName: '',
+                studentEmail: '',
+                activeQuestions: [],
+                currentQuestion: 0,
+                score: 0,
+                selectedAnswer: null,
+                isAnswerCorrect: null,
+                emailStatus: null,
+                emailAnalysis: null,
+                emailAnalysisMsg: ''
+            };
+            render();
+        }
+
+        function startQuiz() {
+            if (state.currentMode === 'deber') {
+                // Práctica: 30 preguntas en orden
+                state.activeQuestions = [...quizData].slice(0, 30);
+            } else if (state.currentMode === 'evaluacion') {
+                // Repaso: 10 preguntas aleatorias
+                state.activeQuestions = [...quizData]
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 10);
+            } else if (state.currentMode === 'extra') {
+                // Deber: 20 preguntas en orden
+                state.activeQuestions = [...quizDataExtra].slice(0, 20);
+            } else if (state.currentMode === 'evaluacion_final') {
+                // Evaluación: 16 preguntas en orden
+                state.activeQuestions = [...quizDataEvaluacion];
+            }
+            state.view = 'name_input';
+            state.emailAnalysis = null;
+            state.emailAnalysisMsg = '';
+            render();
+        }
+
+        function onEmailInput() {
+            const e = document.getElementById('email-in');
+            if (!e) return;
+            const val = e.value.trim();
+            if (val.length < 5) {
+                state.emailAnalysis = null;
+                state.emailAnalysisMsg = '';
+                updateEmailUI();
+                return;
+            }
+            state.emailAnalysis = 'checking';
+            state.emailAnalysisMsg = 'Analizando correo…';
+            updateEmailUI();
+            clearTimeout(window._emailCheckTimer);
+            window._emailCheckTimer = setTimeout(() => {
+                const result = analyzeEmail(val);
+                state.emailAnalysis = result.valid ? 'valid' : 'invalid';
+                state.emailAnalysisMsg = result.msg;
+                updateEmailUI();
+            }, 600);
+        }
+
+        function updateEmailUI() {
+            const feedback = document.getElementById('email-feedback');
+            const analysis = document.getElementById('email-analysis');
+            const input = document.getElementById('email-in');
+            if (!feedback || !analysis || !input) return;
+            if (state.emailAnalysis === 'checking') {
+                feedback.innerHTML = `<span class="text-slate-500 text-sm flex items-center gap-2"><span class="dot-pulse">●</span> Verificando…</span>`;
+                analysis.innerHTML = `<p class="text-xs text-slate-400 mt-1">${state.emailAnalysisMsg}</p>`;
+                input.classList.remove('border-red-400', 'border-emerald-400');
+                input.classList.add('border-slate-300');
+            } else if (state.emailAnalysis === 'invalid') {
+                feedback.innerHTML = `<span class="text-red-600 text-sm font-semibold">✗ Correo no válido o inexistente</span>`;
+                analysis.innerHTML = `<p class="text-xs text-red-500/80 mt-1">${state.emailAnalysisMsg}</p>`;
+                input.classList.remove('border-emerald-400', 'border-slate-300');
+                input.classList.add('border-red-400');
+            } else if (state.emailAnalysis === 'valid') {
+                feedback.innerHTML = `<span class="text-emerald-600 text-sm font-semibold">✓ Correo aceptado</span>`;
+                analysis.innerHTML = `<p class="text-xs text-emerald-600/80 mt-1">${state.emailAnalysisMsg}</p>`;
+                input.classList.remove('border-red-400', 'border-slate-300');
+                input.classList.add('border-emerald-400');
+            } else {
+                feedback.innerHTML = '';
+                analysis.innerHTML = '';
+                input.classList.remove('border-red-400', 'border-emerald-400');
+                input.classList.add('border-slate-300');
+            }
+        }
+
+        function validaDatos() {
+            const n = document.getElementById('name-in').value.trim();
+            const e = document.getElementById('email-in').value.trim();
+            if (n.length <= 2) {
+                alert("Ingresa nombre completo (mínimo 3 caracteres).");
+                return;
+            }
+            const result = analyzeEmail(e);
+            state.emailAnalysis = result.valid ? 'valid' : 'invalid';
+            state.emailAnalysisMsg = result.msg;
+            updateEmailUI();
+            if (!result.valid) return;
+            state.studentName = n;
+            state.studentEmail = e;
+            state.view = 'playing';
+            render();
+        }
+
+        // ---------- LÓGICA SINGLE + MULTI ----------
+        function isMultiQuestion(q) {
+            return q.multi === 'ON';
+        }
+
+        function arraysEqual(a, b) {
+            if (!Array.isArray(a) || !Array.isArray(b)) return false;
+            if (a.length !== b.length) return false;
+            const sa = [...a].sort();
+            const sb = [...b].sort();
+            return sa.every((v, i) => v === sb[i]);
+        }
+
+        function handleAnswer(option) {
+            if (state.isAnswerCorrect !== null) return;
+
+            const currentQ = state.activeQuestions[state.currentQuestion];
+
+            if (isMultiQuestion(currentQ)) {
+                let selected = Array.isArray(state.selectedAnswer) ? [...state.selectedAnswer] : [];
+                const idx = selected.indexOf(option);
+
+                if (idx > -1) {
+                    selected.splice(idx, 1);
+                } else {
+                    if (selected.length >= currentQ.maxSelect) return;
+                    selected.push(option);
+                }
+                state.selectedAnswer = selected;
+                render();
+            } else {
+                if (state.selectedAnswer !== null) return;
+                state.selectedAnswer = option;
+                state.isAnswerCorrect = (option === currentQ.answer);
+                if (state.isAnswerCorrect) state.score++;
+                render();
+                if (state.isAnswerCorrect) {
+                    setTimeout(() => nextQuestion(), 1000);
+                }
+            }
+        }
+
+        function checkMultiAnswer() {
+            if (state.isAnswerCorrect !== null) return;
+
+            const currentQ = state.activeQuestions[state.currentQuestion];
+            if (!isMultiQuestion(currentQ)) return;
+
+            const selected = Array.isArray(state.selectedAnswer) ? state.selectedAnswer : [];
+            if (selected.length === 0) return;
+
+            const correctAnswers = Array.isArray(currentQ.answer) ? currentQ.answer : [currentQ.answer];
+            state.isAnswerCorrect = arraysEqual(selected, correctAnswers);
+
+            if (state.isAnswerCorrect) state.score++;
+            render();
+
+            if (state.isAnswerCorrect) {
+                setTimeout(() => nextQuestion(), 1000);
+            }
+        }
+
+        function nextQuestion() {
+            if (state.currentQuestion + 1 < state.activeQuestions.length) {
+                state.currentQuestion++;
+                state.selectedAnswer = null;
+                state.isAnswerCorrect = null;
+                render();
+            } else {
+                state.view = 'results';
+                render();
+                enviarCorreo();
+            }
+        }
+
+        function enviarCorreo() {
+            if (!state.studentEmail) return;
+            state.emailStatus = 'sending';
+            render();
+            const scorePerc = Math.round((state.score / state.activeQuestions.length) * 100);
+            const totalQ = state.activeQuestions.length;
+            let imageUrl = '';
+            let mensaje = '';
+            if (scorePerc >= 90) {
+                imageUrl = 'https://img.icons8.com/color/128/medal2.png';
+                mensaje = `¡Excelente trabajo, ${state.studentName}! Obtuviste un resultado sobresaliente.`;
+            } else if (scorePerc >= 70) {
+                imageUrl = 'https://img.icons8.com/color/128/diploma.png';
+                mensaje = `¡Muy bien, ${state.studentName}! Has aprobado con un buen resultado.`;
+            } else if (scorePerc >= 50) {
+                imageUrl = 'https://img.icons8.com/color/128/ok.png';
+                mensaje = `Buen esfuerzo, ${state.studentName}. Sigue practicando para mejorar.`;
+            } else {
+                imageUrl = 'https://img.icons8.com/color/128/error.png';
+                mensaje = `Ánimo, ${state.studentName}. Revisa el material y vuelve a intentarlo.`;
+            }
+            const params = {
+                to_name: state.studentName,
+                to_email: state.studentEmail,
+                score: scorePerc,
+                correct_answers: state.score,
+                total_questions: totalQ,
+                mode_name: state.currentMode.toUpperCase(),
+                image_url: imageUrl,
+                mensaje: mensaje,
+                fecha: new Date().toLocaleDateString('es-ES', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                })
+            };
+            emailjs.send("service_dhvsi72", "template_cy74x9h", params)
+                .then(() => {
+                    state.emailStatus = 'success';
+                    render();
+                })
+                .catch((err) => {
+                    console.error('Error EmailJS:', err);
+                    state.emailStatus = 'error';
+                    render();
+                });
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+           
+            let modeTitle = '';
+            let modeDesc = '';
+            if (state.currentMode === 'deber') {
+                modeTitle = '🧪 Deber';
+                modeDesc = 'Resuelve las 30 preguntas del banco en orden.';
+            } else if (state.currentMode === 'evaluacion') {
+                modeTitle = '📝 Repaso';
+                modeDesc = 'Prueba de 10 preguntas seleccionadas al azar.';
+            } else if (state.currentMode === 'extra') {
+                modeTitle = '📚 Práctica';
+                modeDesc = 'Resuelve las 20 preguntas de la Práctica.';
+            } else if (state.currentMode === 'evaluacion_final') {
+                modeTitle = '📊 Evaluación';
+                modeDesc = 'Resuelve las 16 preguntas de la Evaluación.';
+            }
+           
+            if (state.view === 'quiz_home') {
+                app.innerHTML = `
+                <div class="text-center py-16 animate-fade-in bg-white rounded-[3rem] shadow-xl border">
+                    <h2 class="text-4xl font-black text-slate-800 mb-2">${modeTitle}</h2>
+                    <p class="text-slate-500 mb-8 text-lg">${modeDesc}</p>
+                    <button onclick="startQuiz()" class="bg-emerald-600 text-white px-12 py-5 rounded-2xl font-black text-xl hover:bg-emerald-700 transition-all">
+                        INICIAR
+                    </button>
+                </div>`;
+            }
+
+            if (state.view === 'name_input') {
+                app.innerHTML = `
+                <div class="max-w-md mx-auto bg-white p-10 rounded-[2.5rem] shadow-2xl animate-fade-in">
+                    <h2 class="text-2xl font-black mb-6 text-center">Registro de Estudiante</h2>
+                    <input id="name-in" type="text" placeholder="Nombre y Apellido completo" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl mb-4 focus:border-emerald-500 outline-none">
+                   
+                    <div class="relative mb-1">
+                        <input id="email-in" type="email" placeholder="Correo para recibir nota (Gmail, Hotmail…)"
+                               class="w-full p-4 bg-slate-50 border border-slate-300 rounded-xl focus:border-emerald-500 outline-none transition-colors"
+                               oninput="onEmailInput()" onblur="onEmailInput()">
+                    </div>
+                   
+                    <div id="email-feedback" class="min-h-[22px] mb-1"></div>
+                    <div id="email-analysis" class="mb-5"></div>
+                   
+                    <button onclick="validaDatos()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-slate-800 transition-all">
+                        ENTRAR AL TEST
+                    </button>
+                    <p class="text-center text-[11px] text-slate-400 mt-4">Se verifica formato y se descartan correos temporales. No se envía nada hasta terminar el test.</p>
+                </div>`;
+                setTimeout(updateEmailUI, 50);
+            }
+
+            if (state.view === 'playing') {
+                const q = state.activeQuestions[state.currentQuestion];
+                const progress = ((state.currentQuestion + 1) / state.activeQuestions.length) * 100;
+                const multi = isMultiQuestion(q);
+                const selected = multi
+                    ? (Array.isArray(state.selectedAnswer) ? state.selectedAnswer : [])
+                    : (state.selectedAnswer ? [state.selectedAnswer] : []);
+
+                const multiHint = multi
+                    ? `<p class="text-sm text-sky-600 font-semibold mb-4">
+                         Selección múltiple · elige ${q.maxSelect} respuesta${q.maxSelect > 1 ? 's' : ''}
+                         ${selected.length > 0 ? `(${selected.length}/${q.maxSelect})` : ''}
+                       </p>`
+                    : '';
+
+                app.innerHTML = `
+                <div class="animate-fade-in">
+                    <div class="flex justify-between items-center mb-6 px-4">
+                        <span class="font-black text-emerald-600">${state.currentQuestion + 1} / ${state.activeQuestions.length}</span>
+                        <div class="w-48 bg-slate-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full transition-all" style="width:${progress}%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-xl border">
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2 leading-tight">${q.question}</h2>
+                        ${multiHint}
+                        <div class="grid gap-3">
+                            ${q.options.map(opt => {
+                                let style = "border-slate-100 bg-slate-50 hover:border-emerald-200";
+                                const isSelected = selected.includes(opt);
+
+                                if (state.isAnswerCorrect !== null) {
+                                    if (multi) {
+                                        const correctSet = Array.isArray(q.answer) ? q.answer : [q.answer];
+                                        if (correctSet.includes(opt) && isSelected) {
+                                            style = "border-emerald-500 bg-emerald-100 text-emerald-800";
+                                        } else if (isSelected && !correctSet.includes(opt)) {
+                                            style = "border-red-500 bg-red-100 text-red-800";
+                                        } else if (correctSet.includes(opt) && !isSelected) {
+                                            style = "border-emerald-300 bg-emerald-50 text-emerald-700";
+                                        }
+                                    } else {
+                                        if (isSelected) {
+                                            style = state.isAnswerCorrect
+                                                ? "border-emerald-500 bg-emerald-100 text-emerald-800"
+                                                : "border-red-500 bg-red-100 text-red-800";
+                                        }
+                                    }
+                                } else if (isSelected) {
+                                    if (multi) {
+                                        style = "border-sky-400 bg-sky-100 text-sky-800";
+                                    } else {
+                                        style = "border-emerald-500 bg-emerald-100 text-emerald-800";
+                                    }
+                                }
+
+                                return `<button onclick="handleAnswer('${opt.replace(/'/g, "\\'")}')" 
+                                            class="p-5 text-left border-2 rounded-xl font-bold transition-all ${style}">
+                                            ${opt}
+                                        </button>`;
+                            }).join('')}
+                        </div>
+
+                        ${multi && state.isAnswerCorrect === null ? `
+                            <button onclick="checkMultiAnswer()" 
+                                class="mt-6 w-full py-4 rounded-xl font-bold transition-all
+                                ${selected.length === q.maxSelect 
+                                    ? 'bg-sky-600 text-white hover:bg-sky-700' 
+                                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'}"
+                                ${selected.length !== q.maxSelect ? 'disabled' : ''}>
+                                Comprobar respuesta (${selected.length}/${q.maxSelect})
+                            </button>
+                        ` : ''}
+
+                        ${state.selectedAnswer !== null && state.isAnswerCorrect === false ? `
+                            <div class="mt-6 p-5 bg-amber-50 border border-amber-200 rounded-xl">
+                                <p class="font-bold text-amber-800 mb-2">Explicación:</p>
+                                <p class="text-slate-700">${q.explanation}</p>
+                            </div>
+                            <button onclick="nextQuestion()" class="mt-6 w-full bg-emerald-600 text-white py-4 rounded-xl font-bold hover:bg-emerald-700 transition-all">
+                                Siguiente pregunta
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>`;
+            }
+
+            if (state.view === 'results') {
+                const scorePerc = Math.round((state.score / state.activeQuestions.length) * 100);
+                app.innerHTML = `
+                <div class="max-w-md mx-auto text-center animate-fade-in bg-white p-12 rounded-[3rem] shadow-2xl">
+                    <h2 class="text-2xl font-black mb-2">${state.studentName}</h2>
+                    <p class="text-slate-400 uppercase text-xs font-bold mb-6">${state.currentMode}</p>
+                    <div class="text-7xl font-black text-emerald-600 mb-4">${scorePerc}%</div>
+                    <p class="text-lg font-bold text-slate-700 mb-10">${state.score} / ${state.activeQuestions.length} correctas</p>
+                    <button onclick="location.reload()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold">VOLVER AL INICIO</button>
+                    <p class="mt-6 text-xs font-bold text-slate-400">
+                        ${state.emailStatus === 'success' ? '✅ Nota e imagen enviadas al correo' :
+                          state.emailStatus === 'error' ? '⚠️ Error al enviar nota e imagen' :
+                          '⏳ Enviando nota e imagen al correo...'}
+                    </p>
+                </div>`;
+            }
+        }
+        render();
+    </script>
+</body>
+</html>
+
